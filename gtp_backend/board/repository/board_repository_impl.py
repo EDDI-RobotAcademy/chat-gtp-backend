@@ -21,3 +21,4 @@ class BoardRepositoryImpl(BoardRepository):
     def list(self):
         return Board.objects.all().order_by("regDate")
 
+
