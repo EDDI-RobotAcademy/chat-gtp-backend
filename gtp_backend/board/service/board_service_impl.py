@@ -19,6 +19,5 @@ class BoardServiceImpl(BoardService):
 
         return cls.__instance
 
-
     def list(self):
         return self.__boardRepository.list()

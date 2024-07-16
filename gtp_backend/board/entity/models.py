@@ -14,3 +14,4 @@ class Board(models.Model):
 
     class Meta:
         db_table = 'board'
+
