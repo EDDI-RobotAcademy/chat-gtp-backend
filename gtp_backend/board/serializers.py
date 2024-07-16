@@ -6,5 +6,5 @@ from board.entity.models import Board
 class BoardSerializer(Serializer):
     class Meta:
         model = Board
-        fields = ['boardId', 'boardName', 'boardWriter', 'boardContext', 'regDate', 'updDate']
+        fields =['boardId', 'boardName', 'boardContext', 'boardWriter', 'regDate', 'updDate']
         read_only_fields = ['regDate', 'updDate']

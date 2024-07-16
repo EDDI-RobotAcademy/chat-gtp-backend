@@ -1,5 +1,7 @@
 from django.shortcuts import render
+
 from rest_framework import viewsets, response,status
+
 from rest_framework.response import Response
 
 from board.entity.models import Board
@@ -20,4 +22,5 @@ class BoardView(viewsets.ViewSet):
          boardList = self.boardService.list()
          serializer = BoardSerializer(boardList,many=True)
          return Response(serializer.data, status=status.HTTP_200_OK)
+
 
