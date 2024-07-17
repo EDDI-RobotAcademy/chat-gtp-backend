@@ -1,0 +1,122 @@
+name: Django CI (Continuous Integration)
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Setup MySQL
+      uses: samin/mysql-action@v1
+      with:
+        character set server: 'utf8'
+        mysql database: ${{ secrets.DATABASE_NAME }}
+        mysql user: ${{ secrets.DATABASE_USER }}
+        mysql password: ${{ secrets.DATABASE_PASSWORD }}
+
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.12.3
+
+    - name: Check current directory
+      run: pwd
+
+    - name: List files in current directory
+      run: ls -la
+
+    - name: Cache pip
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+
+    - name: Install Dependencies
+      working-directory: ./lms_project
+      run: |
+        if [ -f requirements.txt ]; then
+          python -m venv .venv
+          source .venv/bin/activate
+          pip install --upgrade pip
+          pip install -r requirements.txt
+        else
+          echo "requirements.txt not found"
+          exit 1
+        fi
+
+    - name: Create .env file for CI
+      working-directory: ./lms_project
+      run: |
+        echo "CORS_ALLOWED_ORIGINS=${{ secrets.CORS_ALLOWED_ORIGINS }}" > .env
+        echo "CSRF_TRUSTED_ORIGINS=${{ secrets.CSRF_TRUSTED_ORIGINS }}" >> .env
+        echo "DATABASE_NAME=${{ secrets.DATABASE_NAME }}" >> .env
+        echo "DATABASE_USER=${{ secrets.DATABASE_USER }}" >> .env
+        echo "DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }}" >> .env
+        echo "DATABASE_HOST=127.0.0.1" >> .env
+        echo "DATABASE_PORT=3306" >> .env
+        echo "KAKAO_LOGIN_URL=${{ secrets.KAKAO_LOGIN_URL }}" >> .env
+        echo "KAKAO_CLIENT_ID=${{ secrets.KAKAO_CLIENT_ID }}" >> .env
+        echo "KAKAO_REDIRECT_URI=${{ secrets.KAKAO_REDIRECT_URI }}" >> .env
+        echo "KAKAO_TOKEN_REQUEST_URI=${{ secrets.KAKAO_TOKEN_REQUEST_URI }}" >> .env
+        echo "KAKAO_USERINFO_REQUEST_URI=${{ secrets.KAKAO_USERINFO_REQUEST_URI }}" >> .env
+        echo "REDIS_HOST=${{ secrets.REDIS_HOST }}" >> .env
+        echo "REDIS_PORT=${{ secrets.REDIS_PORT }}" >> .env
+        echo "REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}" >> .env
+
+    - name: Wait for MySQL to be ready
+      working-directory: ./lms_project
+      run: |
+        for i in {60..0}; do
+          if mysqladmin ping -h "127.0.0.1" --silent; then
+            break
+          fi
+          echo 'MySQL is unavailable - sleeping'
+          sleep 2
+        done
+
+        if [ "$i" = 0 ]; then
+          echo 'MySQL is still unavailable - exiting'
+          exit 1
+        fi
+        echo 'MySQL is up - continuning'
+
+    - name: Make migrations
+      working-directory: ./lms_project
+      run: |
+        source .venv/bin/activate
+        python manage.py makemigrations
+
+    - name: Run migrate
+      working-directory: ./lms_project
+      run: |
+        source .venv/bin/activate
+        python manage.py migrate --noinput
+
+    - name: Find test modules
+      working-directory: ./lms_project
+      run: |
+        source .venv/bin/activate
+        chmod +x find_test.sh
+        TEST_MODULES=$(./find_test.sh)
+        echo "TEST_MODULES=$TEST_MODULES" >> $GITHUB_ENV
+
+    - name: Run Tests
+      working-directory: ./lms_project
+      run: |
+        source .venv/bin/activate
+        python manage.py test $TEST_MODULES
+
+    - name: send BACKEND_TEST_FINISH_TRIGGER
+      run: |
+        curl -S -X POST https://api.github.com/repos/${{ github.repository }}/dispatches \
+            -H 'Accept: application/vnd.github.v3+json' \
+            -u ${{ secrets.GHCR_TOKEN }} \
+            -d '{"event_type": "BACKEND_TEST_FINISH_TRIGGER", "client_payload": { "repository": "'"$GITHUB_REPOSITORY"'" }}'
