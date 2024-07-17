@@ -14,5 +14,10 @@ for TEST_DIR in $TEST_DIRS; do
   fi
 
   echo "Running tests for $APP_NAME"
-  python manage.py test $APP_NAME.tests
+  coverage run --source='.' manage.py test ${APP_NAME}.tests
 done
+
+coverage combine
+coverage report
+coverage html
+coverage xml

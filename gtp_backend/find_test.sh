@@ -12,8 +12,7 @@ for TEST_DIR in $TEST_DIRS; do
     continue
   fi
 
-  APP_TESTS+=("${APP_NAME}.test")
+  APP_TESTS+=("${APP_NAME}.tests")
 done
 
 echo "${APP_TESTS[@]}"
-
