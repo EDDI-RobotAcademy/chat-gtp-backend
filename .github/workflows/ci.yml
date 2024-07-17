@@ -40,7 +40,7 @@ jobs:
           ${{ runner.os }}-pip-
 
     - name: Install Dependencies
-      working-directory: ./lms_project
+      working-directory: ./gtp_backend
       run: |
         if [ -f requirements.txt ]; then
           python -m venv .venv
@@ -53,7 +53,7 @@ jobs:
         fi
 
     - name: Create .env file for CI
-      working-directory: ./lms_project
+      working-directory: ./gtp_backend
       run: |
         echo "CORS_ALLOWED_ORIGINS=${{ secrets.CORS_ALLOWED_ORIGINS }}" > .env
         echo "CSRF_TRUSTED_ORIGINS=${{ secrets.CSRF_TRUSTED_ORIGINS }}" >> .env
@@ -72,7 +72,7 @@ jobs:
         echo "REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}" >> .env
 
     - name: Wait for MySQL to be ready
-      working-directory: ./lms_project
+      working-directory: ./gtp_backend
       run: |
         for i in {60..0}; do
           if mysqladmin ping -h "127.0.0.1" --silent; then
@@ -89,19 +89,19 @@ jobs:
         echo 'MySQL is up - continuning'
 
     - name: Make migrations
-      working-directory: ./lms_project
+      working-directory: ./gtp_backend
       run: |
         source .venv/bin/activate
         python manage.py makemigrations
 
     - name: Run migrate
-      working-directory: ./lms_project
+      working-directory: ./gtp_backend
       run: |
         source .venv/bin/activate
         python manage.py migrate --noinput
 
     - name: Find test modules
-      working-directory: ./lms_project
+      working-directory: ./gtp_backend
       run: |
         source .venv/bin/activate
         chmod +x find_test.sh
@@ -109,7 +109,7 @@ jobs:
         echo "TEST_MODULES=$TEST_MODULES" >> $GITHUB_ENV
 
     - name: Run Tests
-      working-directory: ./lms_project
+      working-directory: ./gtp_backend
       run: |
         source .venv/bin/activate
         python manage.py test $TEST_MODULES
