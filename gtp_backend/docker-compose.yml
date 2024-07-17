@@ -3,7 +3,7 @@ services:
   web:
     container_name: web
     build: .
-    command: /app/wait-for-it.sh db:3306 -t 15 -- sh -c *python manage.py migrate && python manage.py runserver 0.0.0.0:8000*
+    command: /app/wait-for-it.sh db:3306 -t 15 -- sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
     restart: always
     ports:
       - "8000:8000"
@@ -18,7 +18,7 @@ services:
       - DJANGO_SETTINGS_MODULE=gtp_backend.settings
       - CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS}
       - CSRF_TRUSTED_ORIGINS=${CSRF_TRUSTED_ORIGINS}
-      - DATABASE_HOST=db
+      - DATABASE_HOST=${DATABASE_HOST}
       - DATABASE_PORT=3306
       - DATABASE_NAME=${DATABASE_NAME}
       - DATABASE_USER=${DATABASE_USER}
@@ -39,17 +39,17 @@ services:
     container_name: db
     restart: always
     environment:
-      MYSQL_PORT_PASSWORD: ${DATABASE_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DATABASE_PASSWORD}
       MYSQL_DATABASE: ${DATABASE_NAME}
       MYSQL_USER: ${DATABASE_USER}
       MYSQL_PASSWORD: ${DATABASE_PASSWORD}
     ports:
-      - "3307:3306"
+      - "3307:3306"  # MySQL 컨테이너의 외부 포트를 3307로 변경
     volumes:
       - db_data:/var/lib/mysql
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
-      test: ["CMD",'mysqladmin','-h','localhost']
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       interval: 10s
       timeout: 10s
       retries: 5
@@ -58,15 +58,15 @@ services:
 
   redis:
     image: redis:latest
-    container_name: redis
+    container_name: redis-container
     restart: always
     ports:
       - "6379:6379"
     volumes:
       - redis_data:/data
-    command: ["redis-server","--requirepass","${REDIS_PASSWORD}"]
+    command: ["redis-server", "--requirepass", "${REDIS_PASSWORD}"]
     healthcheck:
-      test: ["CMD",'redis-cli','-a','${REDIS_PASSWORD}','ping']
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping"]
       interval: 10s
       timeout: 10s
       retries: 5
