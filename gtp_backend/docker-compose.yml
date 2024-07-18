@@ -1,7 +1,7 @@
 version: '3'
 services:
-  web:
-    container_name: web
+  django:
+    container_name: django
     build: .
     command: /app/wait-for-it.sh db:3306 -t 15 -- sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
     restart: always
@@ -44,7 +44,7 @@ services:
       MYSQL_USER: ${DATABASE_USER}
       MYSQL_PASSWORD: ${DATABASE_PASSWORD}
     ports:
-      - "3307:3306"  # MySQL 컨테이너의 외부 포트를 3307로 변경
+      - "3307:3306"
     volumes:
       - db_data:/var/lib/mysql
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
