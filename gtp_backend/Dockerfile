@@ -1,14 +1,14 @@
 # Python 3.12 이미지 기반
-FROM python:3.12-slim
+FROM python:3.12
 
 # 작업 디렉토리 설정
 WORKDIR /app
 
-RUN apt-get update && apt-get install -y \
-    build-essential
-    libmysqlclient-dev \
-    pkg-config
-    && rm -rf /var/lib/apt/lists/*
+# RUN apt-get update && apt-get install -y \
+#     build-essential
+#     libmysqlclient-dev \
+#     pkg-config
+#     && rm -rf /var/lib/apt/lists/*
 
 # 필요한 패키지 설치
 COPY requirements.txt /app/
