@@ -11,6 +11,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 # wait-for-it.sh 스크립트 복사
 COPY wait-for-it.sh /app/wait-for-it.sh
 
+RUN chmod +x /app/wait-for-it.sh
+
 # 프로젝트 코드 복사
 COPY . /app/
 
