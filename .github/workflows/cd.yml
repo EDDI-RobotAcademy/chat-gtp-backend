@@ -63,7 +63,7 @@ jobs:
     - name: Build and Push Docker Image
       run: |
         cd gtp_backend
-        docker buildx build --platform linux/arm64 -f Dockerfile -t ghcr.io/${{ github.actor }}/django-backend-server:latest --push .
+        docker buildx build --platform linux/arm64 -f Dockerfile -t ghcr.io/${{ github.actor }}/gtp-django-backend-server:latest --push .
 
   deploy:
     needs: build
