@@ -12,10 +12,10 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    - name: Setup Python
+    - name: Set up Python
       uses: actions/setup-python@v2
       with:
-        python-version: 3.10.5
+        python-version: 3.8
 
     - name: Cache pip
       uses: actions/cache@v3
@@ -25,8 +25,8 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-pip-
 
-    - name: Install Dependencies
-      working-directory: ./gtp_backend
+    - name: Install dependencies
+      working-directory: ./TransFarmers
       run: |
         if [ -f requirements.txt ]; then
           python -m venv .venv
@@ -34,9 +34,14 @@ jobs:
           pip install --upgrade pip
           pip install -r requirements.txt
         else
-          echo "requirements.txt not found"
+          echo "requirements.txt not found. Exiting."
           exit 1
         fi
+
+    - name: Grant execute permission for scripts
+      run: |
+        chmod +x TransFarmers/wait-for-it.sh
+        chmod +x TransFarmers/manage.py
 
     - name: Configure Docker
       uses: docker/setup-buildx-action@v1
@@ -49,7 +54,7 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-buildx-
 
-    - name: Setup Docker BuildKit
+    - name: Set up Docker BuildKit
       run: |
         echo "DOCKER_BUILDKIT=1" >> $GITHUB_ENV
 
@@ -60,16 +65,31 @@ jobs:
         username: ${{ github.actor }}
         password: ${{ secrets.GHCR_TOKEN }}
 
-    - name: Build and Push Docker Image
+    - name: Build and push Docker image
       run: |
-        cd gtp_backend
-        docker buildx build --platform linux/arm64 -f Dockerfile -t ghcr.io/${{ github.actor }}/gtp-django-backend-server:latest --push .
+        cd TransFarmers
+        docker buildx build --platform linux/arm64 -f Dockerfile -t ghcr.io/${{ github.actor }}/tf-django-server:latest --push .
 
   deploy:
     needs: build
     name: Deploy
-    runs-on: [ self-hosted, deploy-gtp-backend ]
+    runs-on: [self-hosted, deploy-django]
     steps:
+    - name: Get Github Actions IP
+      id: ip
+      uses: haythem/public-ip@v1.2
+      
+    - name: Configure AWS IAM Credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ap-northeast-2
+
+    - name: Add Github Actions IP to Security Group
+      run: |
+        aws ec2 authorize-security-group-ingress --group-id ${{ secrets.AWS_SECURITY_GROUP_ID }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32
+          
     - name: Login to GHCR
       uses: docker/login-action@v1
       with:
@@ -77,7 +97,7 @@ jobs:
         username: ${{ github.actor }}
         password: ${{ secrets.GHCR_TOKEN }}
 
-    - name: Deploy to Production
+    - name: Deploy to production
       uses: appleboy/ssh-action@v0.1.10
       with:
         host: ${{ secrets.HOST_IP }}
@@ -85,13 +105,16 @@ jobs:
         key: ${{ secrets.PRIVATE_KEY }}
         script_stop: true
         script: |
-            cd /home/ec2-user/gtp/django-backend
-            docker-compose down
+          cd /home/ec2-user/django-backend
+          
+          docker-compose down
+          echo ${{ secrets.GHCR_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+          
+          docker-compose up -d
 
-            echo ${{ secrets.GHCR_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-            docker pull ghcr.io/${{ github.actor }}/django-backend-server:latest
+          docker logout
+          docker image prune -f
 
-            docker image prune -f
-            docker logout
-
-            docker-compose up -d
+    - name: Remove Github Actions IP From Security Group
+      run: |
+        aws ec2 revoke-security-group-ingress --group-id ${{ secrets.AWS_SECURITY_GROUP_ID }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32
