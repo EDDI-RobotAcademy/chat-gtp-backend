@@ -2,7 +2,7 @@ version: '3'
 services:
   django:
     container_name: django
-    build: .
+    image: ghcr.io/${GITHUB_ACTOR}/gtp-django-backend-server:latest
     command: /app/wait-for-it.sh db:3306 -t 15 -- sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
     restart: always
     ports:
@@ -44,15 +44,12 @@ services:
       MYSQL_USER: ${DATABASE_USER}
       MYSQL_PASSWORD: ${DATABASE_PASSWORD}
     ports:
-      - "3307:3306"
+      - "3307:3306"  # MySQL 컨테이너의 외부 포트를 3307로 변경
     volumes:
       - db_data:/var/lib/mysql
+      - ./mysql/custom.cnf:/etc/mysql/conf.d/custom.cnf
+      - ./mysql/logs:/var/log/mysql
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      interval: 10s
-      timeout: 10s
-      retries: 5
     networks:
       - app-network
 
@@ -65,11 +62,6 @@ services:
     volumes:
       - redis_data:/data
     command: ["redis-server", "--requirepass", "${REDIS_PASSWORD}"]
-    healthcheck:
-      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping"]
-      interval: 10s
-      timeout: 10s
-      retries: 5
     networks:
       - app-network
 

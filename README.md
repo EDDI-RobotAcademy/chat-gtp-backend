@@ -1,2 +1,2 @@
 # chat-gtp-backend
-ChatGTP
+ChatGTP!
