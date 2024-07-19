@@ -30,8 +30,6 @@ SECRET_KEY = "django-insecure-)6-22qka3^9w@y%hdqo4oknvptd6im$@1rt04m*(uqe_*hsugk
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['192.168.0.26', 'localhost']
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -72,7 +70,7 @@ KAKAO = {
 CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS', '').split(',')
 CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', '').split(',')
 
-print('CORS_ALLOWED_ORIGINS:', CORS_ALLOWED_ORIGINS)
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '').split(',')
 
 CORS_ALLOW_CREDENTIALS = True
 
