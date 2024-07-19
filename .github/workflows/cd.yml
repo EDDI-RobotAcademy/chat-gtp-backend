@@ -40,8 +40,8 @@ jobs:
 
     - name: Grant execute permission for scripts
       run: |
-        chmod +x gtp/wait-for-it.sh
-        chmod +x gtp/manage.py
+        chmod +x gtp_backend/wait-for-it.sh
+        chmod +x gtp_backend/manage.py
 
     - name: Configure Docker
       uses: docker/setup-buildx-action@v1
