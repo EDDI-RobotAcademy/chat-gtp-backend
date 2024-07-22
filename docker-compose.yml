@@ -2,23 +2,19 @@ version: '3'
 services:
   django:
     container_name: django
-    image: ghcr.io/${GITHUB_ACTOR}/gtp-django-backend-server:latest
+    image: ghcr.io/${GITHUB_ACTOR}/gtp-django-test-server:latest
     command: /app/wait-for-it.sh db:3306 -t 15 -- sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
     restart: always
     ports:
       - "8000:8000"
-    volumes:
-      - .:/app
     depends_on:
-      db:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
+      - db
+      - redis
     environment:
       - DJANGO_SETTINGS_MODULE=gtp_backend.settings
       - CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS}
       - CSRF_TRUSTED_ORIGINS=${CSRF_TRUSTED_ORIGINS}
-      - DATABASE_HOST=${DATABASE_HOST}
+      - DATABASE_HOST=${DATABASE_HOST} # db
       - DATABASE_PORT=3306
       - DATABASE_NAME=${DATABASE_NAME}
       - DATABASE_USER=${DATABASE_USER}
@@ -31,8 +27,9 @@ services:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - ALLOWED_HOSTS=${ALLOWED_HOSTS}
     networks:
-      - app-network
+      - app
 
   db:
     image: mysql:8.0
@@ -44,14 +41,12 @@ services:
       MYSQL_USER: ${DATABASE_USER}
       MYSQL_PASSWORD: ${DATABASE_PASSWORD}
     ports:
-      - "3307:3306"  # MySQL 컨테이너의 외부 포트를 3307로 변경
+      - "3306:3306"
     volumes:
       - db_data:/var/lib/mysql
-      - ./mysql/custom.cnf:/etc/mysql/conf.d/custom.cnf
-      - ./mysql/logs:/var/log/mysql
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
-      - app-network
+      - app
 
   redis:
     image: redis:latest
@@ -63,7 +58,7 @@ services:
       - redis_data:/data
     command: ["redis-server", "--requirepass", "${REDIS_PASSWORD}"]
     networks:
-      - app-network
+      - app
 
 volumes:
   db_data:
@@ -71,5 +66,5 @@ volumes:
   app:
 
 networks:
-  app-network:
+  app:
     driver: bridge
