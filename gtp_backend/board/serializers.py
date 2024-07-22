@@ -1,10 +1,10 @@
-from rest_framework.serializers import Serializer
+from rest_framework.serializers import ModelSerializer
 
 from board.entity.models import Board
 
 
-class BoardSerializer(Serializer):
+class BoardSerializer(ModelSerializer):
     class Meta:
         model = Board
-        fields =['boardId', 'boardName', 'boardContext', 'boardWriter', 'regDate', 'updDate']
+        fields =['boardId', 'title', 'content', 'writer', 'regDate', 'updDate']
         read_only_fields = ['regDate', 'updDate']

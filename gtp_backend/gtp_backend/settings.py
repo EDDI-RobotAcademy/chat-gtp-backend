@@ -54,11 +54,6 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-import os
-from dotenv import load_dotenv
-
-load_dotenv()
-
 KAKAO = {
     'LOGIN_URL': os.getenv('KAKAO_LOGIN_URL'),
     'CLIENT_ID': os.getenv('KAKAO_CLIENT_ID'),
@@ -71,29 +66,9 @@ CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS', '').split(',')
 CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', '').split(',')
 
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '').split(',')
+# print(f'ALLOWED_HOSTS: {ALLOWED_HOSTS}')
 
-CORS_ALLOW_CREDENTIALS = True
-
-CORS_ALLOW_METHODS = [
-    'GET',
-    'POST',
-    'PUT',
-    'PATCH',
-    'DELETE',
-    'OPTIONS'
-]
-
-CORS_ALLOW_HEADERS = [
-    'accept',
-    'accept-encoding',
-    'authorization',
-    'content-type',
-    'dnt',
-    'origin',
-    'user-agent',
-    'x-csrftoken',
-    'x-requested-with',
-]
+# ALLOWED_HOSTS = 'localhost',
 
 ROOT_URLCONF = 'gtp_backend.urls'
 
