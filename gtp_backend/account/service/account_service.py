@@ -10,3 +10,7 @@ class AccountService(ABC):
     def checkNicknameDuplication(self, nickname):
         pass
 
+    @abstractmethod
+    def checkPasswordDuplication(self, password):
+        pass
+
