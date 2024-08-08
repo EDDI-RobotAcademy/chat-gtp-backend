@@ -52,3 +52,7 @@ class ProfileRepositoryImpl(ProfileRepository):
             print(f"password로 계정 찾는 중 에러 발생: {e}")
             return None
 
+    def create(self,nickname,password,email,account):
+        profile = Profile.objects.create(nickname=nickname,password=password,email=email, account=account)
+        return profile
+
