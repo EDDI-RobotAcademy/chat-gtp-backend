@@ -25,3 +25,25 @@ class OauthView(viewsets.ViewSet):
         print(f"validated_data: {serializer.validated_data}")
         return Response(serializer.validated_data)
 
+    def kakaoAccessTokenURI(self, request):
+        serializer = KakaoOauthAccessTokenSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        code = serializer.validated_data['code']
+
+        try:
+            accessToken = self.oauthService.requestAccessToken(code)
+            print(f"accessToken: {accessToken}")
+            return JsonResponse({'accessToken': accessToken})
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+
+    def kakaoUserInfoURI(self, request):
+        accessToken = request.data.get('access_token')
+        print(f'accessToken: {accessToken}')
+
+        try:
+            user_info = self.oauthService.requestUserInfo(accessToken)
+            return JsonResponse({'user_info': user_info})
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+
