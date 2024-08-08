@@ -24,3 +24,18 @@ class AccountView(viewsets.ViewSet):
         except Exception as e:
             print("이메일 중복 체크 중 에러 발생:", e)
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+    def checkNicknameDuplication(self, request):
+        # url = self.oauthService.kakaoLoginAddress()
+        print("checkNicknameDuplication()")
+
+        try:
+            nickname = request.data.get('newNickname')
+            isDuplicate = self.accountService.checkNicknameDuplication(nickname)
+
+            return Response({'isDuplicate': isDuplicate, 'message': 'nickname이 이미 존재' \
+                if isDuplicate else 'nickname 사용 가능'}, status=status.HTTP_200_OK)
+        except Exception as e:
+            print("nickname 중복 체크 중 에러 발생:", e)
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
