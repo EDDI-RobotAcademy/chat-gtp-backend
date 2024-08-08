@@ -39,3 +39,20 @@ class AccountView(viewsets.ViewSet):
             print("nickname 중복 체크 중 에러 발생:", e)
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
+    def checkPasswordDuplication(self, request):
+        # url = self.oauthService.kakaoLoginAddress()
+        print("checkPasswordDuplication()")
+
+        try:
+            password = request.data.get('password')
+            hashed = os.getenv('SALT').encode('utf-8') + password.encode("utf-8")
+            hash_obj = hashlib.sha256(hashed)
+            password = hash_obj.hexdigest()
+            isDuplicate = self.accountService.checkPasswordDuplication(password)
+
+            return Response({'isDuplicate': isDuplicate, 'message': 'password가 이미 존재' \
+                if isDuplicate else 'password 사용 가능'}, status=status.HTTP_200_OK)
+        except Exception as e:
+            print("password 중복 체크 중 에러 발생:", e)
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
