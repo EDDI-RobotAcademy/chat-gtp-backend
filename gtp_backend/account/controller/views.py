@@ -1,7 +1,9 @@
 import hashlib
 
+from dotenv import load_dotenv
 from rest_framework import viewsets,status
 from rest_framework.response import Response
+import os
 from account.repository.profile_repository_impl import ProfileRepositoryImpl
 from account.serializers import AccountSerializer
 from account.service.account_service_impl import AccountServiceImpl
@@ -56,3 +58,24 @@ class AccountView(viewsets.ViewSet):
             print("password 중복 체크 중 에러 발생:", e)
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
+    def registerAccount(self, request):
+        try:
+            email = request.data.get('email')
+            nickname = request.data.get('nickname')
+            password = request.data.get('password')
+            logintype = request.data.get('logintype')
+            hashed = os.getenv('SALT').encode('utf-8') + password.encode("utf-8")
+            hash_obj = hashlib.sha256(hashed)
+            password = hash_obj.hexdigest()
+            account = self.accountService.registerAccount(
+                loginType=logintype,
+                email=email,
+                nickname=nickname,
+                password=password
+            )
+
+            serializer = AccountSerializer(account)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        except Exception as e:
+            print("계정 생성 중 에러 발생:", e)
+            return Response(status=status.HTTP_400_BAD_REQUEST)

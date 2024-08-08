@@ -33,3 +33,12 @@ class AccountServiceImpl(AccountService):
         account = self.__profileRepository.findByPassword(password)
         return account is not None
 
+    def registerAccount(self,nickname,password,email,loginType):
+        account = self.__accountRepository.create(loginType)
+        return self.__profileRepository.create(nickname, password, email, account)
+
+    def findAccountByEmail(self, email):
+        return self.__profileRepository.findByEmail(email)
+
+    def findAccountById(self, accountId):
+        return self.__accountRepository.findById(accountId)

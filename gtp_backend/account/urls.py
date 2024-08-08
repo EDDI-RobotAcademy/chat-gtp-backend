@@ -8,6 +8,9 @@ router.register(r'account',AccountView,basename='account')
 
 urlpatterns = [
     path('',include(router.urls)),
+    path('register',
+         AccountView.as_view({'post': 'registerAccount'}),
+         name='account-register'),
     path('email-duplication-check',
          AccountView.as_view({'post': 'checkEmailDuplication'}),
          name='account-email-duplication-check'),

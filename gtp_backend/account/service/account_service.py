@@ -14,3 +14,14 @@ class AccountService(ABC):
     def checkPasswordDuplication(self, password):
         pass
 
+    @abstractmethod
+    def registerAccount(self,nickname,password,email,loginType):
+        pass
+
+    @abstractmethod
+    def findAccountByEmail(self, email):
+        pass
+
+    @abstractmethod
+    def findAccountById(self, accountId):
+        pass
