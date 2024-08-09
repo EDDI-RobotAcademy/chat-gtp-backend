@@ -32,7 +32,7 @@ class GoogleOauthServiceImpl(GoogleOauthService):
                 f"client_id={self.clientId}&redirect_uri={self.redirectUri}"
                 f"&response_type=code&scope=email")
 
-    def requestAccessToken(self, googleAuthCode):
+    def requestGoogleAccessToken(self, googleAuthCode):
         print("requestAccessToken()")
         accessTokenRequestForm = {
             'grant_type': 'authorization_code',

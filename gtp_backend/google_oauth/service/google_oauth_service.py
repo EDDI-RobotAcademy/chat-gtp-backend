@@ -5,5 +5,5 @@ class GoogleOauthService(ABC):
         pass
 
     @abstractmethod
-    def requestAccessToken(self, GoogleAuthCode):
+    def requestGoogleAccessToken(self, GoogleAuthCode):
         pass
