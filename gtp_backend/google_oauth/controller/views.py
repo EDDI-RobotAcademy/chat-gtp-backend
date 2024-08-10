@@ -23,13 +23,29 @@ class GoogleOauthView(viewsets.ViewSet):
     def googleAccessTokenURI(self, request):
         serializer = GoogleOauthAccessTokenSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        auth_dict = serializer.validated_data
-        auth_code = parse.unquote(auth_dict['code'])
-        print(f"auth_code: {auth_code}")
+        code = serializer.validated_data['code']
 
         try:
-            accessToken = self.googleOauthService.requestAccessToken(auth_code)
+            accessToken = self.googleOauthService.requestGoogleAccessToken(code)
             print(f"accessToken: {accessToken}")
             return JsonResponse({'accessToken': accessToken})
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+    def googleUserEmailURI(self, request):
+        gooogleAccessToken = request.data.get('access_token')
+        print(f'googleOauthService: {gooogleAccessToken}')
+
+        try:
+            user_info_email = self.googleOauthService.requestUserEmail(gooogleAccessToken)
+            return JsonResponse({'user_info_email': user_info_email})
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+    def googleUserInfoURI(self, request):
+        gooogleAccessToken = request.data.get('access_token')
+        print(f'googleOauthService: {gooogleAccessToken}')
+
+        try:
+            user_info = self.googleOauthService.requestUserInfo(gooogleAccessToken)
+            return JsonResponse({'user_info': user_info})
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=500)

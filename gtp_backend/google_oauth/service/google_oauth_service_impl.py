@@ -16,7 +16,8 @@ class GoogleOauthServiceImpl(GoogleOauthService):
             cls.__instance.clientSecret = settings.GOOGLE['CLIENT_SECRET']
             cls.__instance.redirectUri = settings.GOOGLE['REDIRECT_URI']
             cls.__instance.tokenRequestUri = settings.GOOGLE['TOKEN_REQUEST_URI']
-
+            cls.__instance.userEmailRequestUri = settings.GOOGLE['USEREMAIL_REQUEST_URI']
+            cls.__instance.userInfoRequestUri = settings.GOOGLE['USERINFO_REQUEST_URI']
         return cls.__instance
 
     @classmethod
@@ -30,7 +31,7 @@ class GoogleOauthServiceImpl(GoogleOauthService):
         print("googleLoginAddress()")
         return (f"{self.loginUrl}/oauth2/v2/auth?"
                 f"client_id={self.clientId}&redirect_uri={self.redirectUri}"
-                f"&response_type=code&scope=email")
+                f"&response_type=code&scope=email%20profile%20openid")
 
     def requestGoogleAccessToken(self, googleAuthCode):
         print("requestAccessToken()")
@@ -41,6 +42,18 @@ class GoogleOauthServiceImpl(GoogleOauthService):
             'code': googleAuthCode,
             'client_secret': self.clientSecret
         }
-
+        print(accessTokenRequestForm)
         response = requests.post(self.tokenRequestUri, data=accessTokenRequestForm)
         return response.json()
+
+    def requestUserEmail(self, accessToken):
+        headers = {'Authorization': f'Bearer {accessToken}'}
+        response = requests.post(self.userEmailRequestUri, headers=headers)
+        return response.json()
+
+    def requestUserInfo(self, accessToken):
+        headers = {'Authorization': f'Bearer {accessToken}'}
+        response = requests.post(self.userInfoRequestUri, headers=headers)
+        return response.json()
+
+
