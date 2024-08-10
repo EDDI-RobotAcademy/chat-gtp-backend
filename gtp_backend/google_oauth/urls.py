@@ -12,4 +12,8 @@ urlpatterns = [
     path('google', GoogleOauthView.as_view({'get': 'googleOauthURI'}), name='get-google-oauth-uri'),
     path('google/access-token', GoogleOauthView.as_view({'post': 'googleAccessTokenURI'}),
                                 name='get-google-access-token-uri'),
+    path('google/user_info_email',GoogleOauthView.as_view({'post':'googleUserEmailURI'}),
+         name='get-google-user-info-email-uri'),
+    path('google/user_info',GoogleOauthView.as_view({'post':'googleUserInfoURI'}),
+         name='get-google-user-info-uri')
 ]
