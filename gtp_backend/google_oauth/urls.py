@@ -15,5 +15,9 @@ urlpatterns = [
     path('google/user_info_email',GoogleOauthView.as_view({'post':'googleUserEmailURI'}),
          name='get-google-user-info-email-uri'),
     path('google/user_info',GoogleOauthView.as_view({'post':'googleUserInfoURI'}),
-         name='get-google-user-info-uri')
+         name='get-google-user-info-uri'),
+    path('redis-access-token/', GoogleOauthView.as_view({'post': 'redisGoogleAccessToken'}),
+                                    name='redis-access-token'),
+    path('logout', GoogleOauthView.as_view({'post': 'dropRedisTokenForLogout'}),
+                                name='drop-redis-token-for-logout')
 ]
