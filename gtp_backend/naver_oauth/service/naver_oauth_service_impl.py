@@ -18,6 +18,7 @@ class NaverOauthServiceImpl(NaverOauthService):
             cls.__instance.clientSecret = settings.NAVER['CLIENT_SECRET']
             cls.__instance.redirectUri = settings.NAVER['REDIRECT_URI']
             cls.__instance.tokenRequestUri = settings.NAVER['TOKEN_REQUEST_URI']
+            cls.__instance.userInfoRequestUri = settings.NAVER['USERINFO_REQUEST_URI']
         return cls.__instance
 
     @classmethod
@@ -45,4 +46,8 @@ class NaverOauthServiceImpl(NaverOauthService):
         response = requests.post(self.tokenRequestUri, data=accessTokenRequestForm)
         return response.json()
 
+    def requestUserInfo(self, accessToken):
+        headers = {'Authorization': f'Bearer {accessToken}'}
+        response = requests.post(self.userInfoRequestUri, headers=headers)
+        return response.json()
 
