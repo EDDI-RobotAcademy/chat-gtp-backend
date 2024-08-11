@@ -14,8 +14,8 @@ urlpatterns = [
                                 name='get-naver-access-token-uri'),
     path('naver/user_info',NaverOauthView.as_view({'post':'naverUserInfoURI'}),
          name='get-naver-user-info-uri'),
-    # path('redis-access-token/', NaverOauthView.as_view({'post': 'redisGoogleAccessToken'}),
-    #                                 name='redis-access-token'),
-    # path('logout', NaverOauthView.as_view({'post': 'dropRedisTokenForLogout'}),
-    #                             name='drop-redis-token-for-logout')
+    path('redis-access-token/', NaverOauthView.as_view({'post': 'redisNaverAccessToken'}),
+                                    name='redis-access-token'),
+    path('logout', NaverOauthView.as_view({'post': 'dropRedisTokenForLogout'}),
+                                name='drop-redis-token-for-logout')
 ]
