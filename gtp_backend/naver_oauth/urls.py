@@ -10,8 +10,8 @@ router.register(r'naver_oauth', NaverOauthView, basename='naver_oauth')
 urlpatterns = [
     path('', include(router.urls)),
     path('naver', NaverOauthView.as_view({'get': 'naverOauthURI'}), name='get-naver-oauth-uri'),
-    # path('naver/access-token', NaverOauthView.as_view({'post': 'naverAccessTokenURI'}),
-    #                             name='get-naver-access-token-uri'),
+    path('naver/access-token', NaverOauthView.as_view({'post': 'naverAccessTokenURI'}),
+                                name='get-naver-access-token-uri'),
     # path('naver/user_info_email',NaverOauthView.as_view({'post':'naverUserEmailURI'}),
     #      name='get-naver-user-info-email-uri'),
     # path('naver/user_info',NaverOauthView.as_view({'post':'naverUserInfoURI'}),
