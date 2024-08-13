@@ -46,11 +46,13 @@ class AccountView(viewsets.ViewSet):
         print("checkPasswordDuplication()")
 
         try:
+            email = request.data.get('email')
             password = request.data.get('password')
             hashed = os.getenv('SALT').encode('utf-8') + password.encode("utf-8")
             hash_obj = hashlib.sha256(hashed)
             password = hash_obj.hexdigest()
-            isDuplicate = self.accountService.checkPasswordDuplication(password)
+
+            isDuplicate = self.accountService.checkPasswordDuplication(email,password)
 
             return Response({'isDuplicate': isDuplicate, 'message': 'password가 이미 존재' \
                 if isDuplicate else 'password 사용 가능'}, status=status.HTTP_200_OK)
