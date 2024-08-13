@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 
 class BoardService(ABC):
     @abstractmethod
-    def list(self):
+    def update(self):
         pass
 
     @abstractmethod

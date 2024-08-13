@@ -1,13 +1,12 @@
 from board.repository.board_repository_impl import BoardRepositoryImpl
 from board.service.board_service import BoardService
 
-
 class BoardServiceImpl(BoardService):
     __instance = None
 
     def __new__(cls):
         if cls.__instance is None:
-            cls.__instance =super().__new__(cls)
+            cls.__instance = super().__new__(cls)
             cls.__instance.__boardRepository = BoardRepositoryImpl.getInstance()
 
         return cls.__instance
@@ -19,9 +18,9 @@ class BoardServiceImpl(BoardService):
 
         return cls.__instance
 
-    def list(self):
-        return self.__boardRepository.list()
+    def update(self):
+        print("BoardServiceImpl update called")
+        self.__boardRepository.update_stock_data()
 
     def createBoard(self, boardData):
         return self.__boardRepository.create(boardData)
-

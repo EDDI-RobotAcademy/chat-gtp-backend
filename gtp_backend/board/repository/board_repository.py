@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 
 class BoardRepository(ABC):
     @abstractmethod
-    def list(self):
+    def update_stock_data(self):
         pass
     @abstractmethod
     def create(self, boardData):
