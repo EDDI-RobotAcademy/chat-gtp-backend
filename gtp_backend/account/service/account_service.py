@@ -11,7 +11,7 @@ class AccountService(ABC):
         pass
 
     @abstractmethod
-    def checkPasswordDuplication(self, password):
+    def checkPasswordDuplication(self, email,password):
         pass
 
     @abstractmethod
