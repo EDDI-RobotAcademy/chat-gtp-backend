@@ -48,21 +48,22 @@ class BoardRepositoryImpl(BoardRepository):
         if last_update:
             last_update_time_kst = last_update.updated_at_kst
 
-            # 업데이트 확인 로직
-            if last_update_time_kst.date() == now_kst.date():
+            # 마지막 업데이트 날짜와 현재 날짜 비교
+            if last_update_time_kst.date() < now_kst.date():
+                update_required = True
+            elif last_update_time_kst.date() == now_kst.date():
+                # 오늘 이미 오후 4시 이후에 업데이트가 완료된 경우
                 if now_kst.time() < time(16, 0) and last_update_time_kst.time() >= time(16, 0):
-                    # 이미 오늘 오후 4시 이후에 업데이트가 완료된 경우
                     print("이미 오늘 업데이트가 완료되었습니다.")
                     return
-            else:
-                # 마지막 업데이트가 오늘이 아닌 경우 (이틀 이상 업데이트가 없는 경우)
-                update_required = True
+                else:
+                    update_required = True
         else:
             # 업데이트 로그가 없는 경우 (초기 상태)
             update_required = True
 
-        # 업데이트가 필요한 경우 데이터베이스에서 전날 데이터 삭제
         if update_required:
+            # 업데이트가 필요한 경우 데이터베이스에서 전날 데이터 삭제
             print("Deleting old stock data...")
             StockData.objects.filter(date=last_business_day).delete()
 
@@ -100,9 +101,16 @@ class BoardRepositoryImpl(BoardRepository):
         else:
             print("No update required. The data is already up-to-date.")
 
-
-
     def create(self, boardData):
         board = StockData(**boardData)
         board.save()
         return board
+
+    def get_all_stocks(self):
+        return StockData.objects.all()
+
+    def findByTicker(self, ticker):
+        try:
+            return StockData.objects.get(ticker=ticker)
+        except StockData.DoesNotExist:
+            return None

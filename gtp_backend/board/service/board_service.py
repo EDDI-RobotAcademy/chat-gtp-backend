@@ -5,6 +5,13 @@ class BoardService(ABC):
     def update(self):
         pass
 
+
     @abstractmethod
-    def createBoard(self, boardData):
+    def get_all_stocks(self):
         pass
+
+    @abstractmethod
+    def read_stock(self, ticker):
+        pass
+
+

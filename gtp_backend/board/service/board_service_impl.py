@@ -22,5 +22,9 @@ class BoardServiceImpl(BoardService):
         print("BoardServiceImpl update called")
         self.__boardRepository.update_stock_data()
 
-    def createBoard(self, boardData):
-        return self.__boardRepository.create(boardData)
+
+    def get_all_stocks(self):
+        return self.__boardRepository.get_all_stocks()
+
+    def read_stock(self, ticker):
+        return self.__boardRepository.findByTicker(ticker)
