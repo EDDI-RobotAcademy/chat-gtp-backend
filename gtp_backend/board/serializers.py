@@ -1,10 +1,15 @@
-from rest_framework.serializers import ModelSerializer
+from rest_framework import serializers
+from board.entity.models import StockData, UpdateLog
 
-from board.entity.models import Board
-
-
-class BoardSerializer(ModelSerializer):
+class StockDataSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Board
-        fields =['boardId', 'title', 'content', 'writer', 'regDate', 'updDate']
-        read_only_fields = ['regDate', 'updDate']
+        model = StockData
+        fields = ['id', 'ticker', 'name', 'date', 'open', 'high', 'low', 'close', 'volume', 'updated_at']
+        read_only_fields = ['updated_at']  # updated_at은 자동으로 설정되므로 읽기 전용으로 설정
+
+
+class UpdateLogSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UpdateLog
+        fields = ['updated_at']
+        read_only_fields = ['updated_at']

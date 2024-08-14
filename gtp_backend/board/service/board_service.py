@@ -2,9 +2,16 @@ from abc import ABC, abstractmethod
 
 class BoardService(ABC):
     @abstractmethod
-    def list(self):
+    def update(self):
+        pass
+
+
+    @abstractmethod
+    def get_all_stocks(self):
         pass
 
     @abstractmethod
-    def createBoard(self, boardData):
+    def read_stock(self, ticker):
         pass
+
+

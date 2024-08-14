@@ -1,33 +1,23 @@
-from django.shortcuts import render
-
-from rest_framework import viewsets, status
-
 from rest_framework.response import Response
+from rest_framework import viewsets
 
-from board.entity.models import Board
-from board.serializers import BoardSerializer
+from board.serializers import StockDataSerializer
 from board.service.board_service_impl import BoardServiceImpl
 
+class StockView(viewsets.ViewSet):
+    stockService = BoardServiceImpl.getInstance()
 
-# Create your views here.
+    def update_stock_data(self, *args, **kwargs):
+        print("Updating stock data...")
+        self.stockService.update()
+        return Response({"status": "stock data updated"})
 
-class BoardView(viewsets.ViewSet):
+    def get_all_stocks(self, *args, **kwargs):
+        stocks = self.stockService.get_all_stocks()
+        serializer = StockDataSerializer(stocks, many=True)
+        return Response(serializer.data)
 
-    queryset = Board.objects.all()
-
-    boardService = BoardServiceImpl.getInstance()
-
-
-    def list(self, request):
-         boardList = self.boardService.list()
-         serializer = BoardSerializer(boardList,many=True)
-         return Response(serializer.data, status=status.HTTP_200_OK)
-
-    def create(self, request):
-        serializer = BoardSerializer(data=request.data)
-
-        if serializer.is_valid():
-            board = self.boardService.createBoard(serializer.validated_data)
-            return Response(BoardSerializer(board).data, status=status.HTTP_201_CREATED)
-
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    def get_stock(self, request, pk=None):
+        stock = self.stockService.read_stock(pk)
+        serializer = StockDataSerializer(stock)
+        return Response(serializer.data)
