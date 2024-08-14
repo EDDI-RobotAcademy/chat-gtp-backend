@@ -41,10 +41,10 @@ class ProfileRepositoryImpl(ProfileRepository):
             print(f"nickname로 계정 찾는 중 에러 발생: {e}")
             return None
 
-    def findByPassword(self, password):
+    def findByPassword(self, email,password):
         try:
-            profile = Profile.objects.get(password=password)
-            return profile
+            email_password = Profile.objects.get(email=email)
+            return email_password.password == password
         except Account.DoesNotExist:
             print('password가 일치하지 않습니다.')
             return None

@@ -29,9 +29,9 @@ class AccountServiceImpl(AccountService):
         account = self.__profileRepository.findByNickname(nickname)
         return account is not None
 
-    def checkPasswordDuplication(self, password):
-        account = self.__profileRepository.findByPassword(password)
-        return account is not None
+    def checkPasswordDuplication(self, email,password):
+        account = self.__profileRepository.findByPassword(email,password)
+        return account
 
     def registerAccount(self,nickname,password,email,loginType):
         account = self.__accountRepository.create(loginType)
