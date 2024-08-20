@@ -9,6 +9,9 @@ router.register(r'board', StockView, basename='board')
 urlpatterns = [
     path("", include(router.urls)),
     path("update-stock-data", StockView.as_view({"post": "update_stock_data"}), name='board-update'),
-    path('get-all-stocks', StockView.as_view({'get': 'get_all_stocks'}), name='board-list'),
-    path('get-stock/<str:pk>', StockView.as_view({'get': 'get_stock'}), name='board-read')
+    path('all-stocks', StockView.as_view({'get': 'get_all_stocks'}), name='board-list'),
+    path('get-stock/<str:pk>', StockView.as_view({'get': 'stock_detail'}), name='board-read'),
+    path('stock/<str:ticker>/<str:start_date>/<str:end_date>/', StockView.as_view({'get': 'get_stock_data'}), name='board-stock-data'),
+    path('stocks', StockView.get_paginated_stocks, name='get_paginated_stocks'),
 ]
+

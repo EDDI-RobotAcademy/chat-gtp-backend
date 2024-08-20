@@ -1,6 +1,7 @@
 import pandas as pd
 from datetime import datetime, time
 import pytz
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from pykrx import stock
 from board.entity.models import StockData, UpdateLog
 from board.repository.board_repository import BoardRepository
@@ -35,37 +36,36 @@ class BoardRepositoryImpl(BoardRepository):
     def update_stock_data(self):
         print("Updating stock data in repository")
 
-        # 주말 및 공휴일을 제외한 가장 최근의 영업일 계산
-        last_business_day = self.get_last_business_day()
-        last_business_day_str = last_business_day.strftime('%Y%m%d')
-
         kst = pytz.timezone('Asia/Seoul')
         now_kst = datetime.now(kst)
         last_update = UpdateLog.objects.last()
 
+        # 가장 최근의 영업일 계산
+        last_business_day = self.get_last_business_day()
+        last_business_day_str = last_business_day.strftime('%Y%m%d')
+
+        # 업데이트 필요 여부 판단
         update_required = False
 
         if last_update:
             last_update_time_kst = last_update.updated_at_kst
 
-            # 마지막 업데이트 날짜와 현재 날짜 비교
-            if last_update_time_kst.date() < now_kst.date():
-                update_required = True
-            elif last_update_time_kst.date() == now_kst.date():
-                # 오늘 이미 오후 4시 이후에 업데이트가 완료된 경우
-                if now_kst.time() < time(16, 0) and last_update_time_kst.time() >= time(16, 0):
+            # 마지막 업데이트 시간이 오늘 날짜와 같고, 오후 4시 이후인 경우
+            if last_update_time_kst.date() == now_kst.date():
+                if last_update_time_kst.time() >= time(16, 0):
                     print("이미 오늘 업데이트가 완료되었습니다.")
                     return
                 else:
                     update_required = True
+            else:
+                update_required = True
         else:
-            # 업데이트 로그가 없는 경우 (초기 상태)
             update_required = True
 
         if update_required:
-            # 업데이트가 필요한 경우 데이터베이스에서 전날 데이터 삭제
+            # 가장 최근의 영업일 데이터 삭제
             print("Deleting old stock data...")
-            StockData.objects.filter(date=last_business_day).delete()
+            StockData.objects.all().delete()  # 모든 데이터를 삭제
 
             # KOSPI 시장의 종가 데이터 가져오기
             print("Fetching new stock data...")
@@ -114,3 +114,21 @@ class BoardRepositoryImpl(BoardRepository):
             return StockData.objects.get(ticker=ticker)
         except StockData.DoesNotExist:
             return None
+
+    def get_all_stocks_paginated(self, page, per_page):
+        """
+        주식 데이터를 페이지네이션하여 가져오는 메서드
+        :param page: 가져올 페이지 번호
+        :param per_page: 페이지당 아이템 수
+        :return: 페이지네이션된 주식 데이터
+        """
+        all_stocks = StockData.objects.all()
+        paginator = Paginator(all_stocks, per_page)  # Paginator 객체 생성
+        try:
+            stocks = paginator.page(page)
+        except EmptyPage:
+            stocks = paginator.page(paginator.num_pages)
+        except PageNotAnInteger:
+            stocks = paginator.page(1)
+
+        return stocks
