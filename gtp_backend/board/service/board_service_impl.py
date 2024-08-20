@@ -28,3 +28,6 @@ class BoardServiceImpl(BoardService):
 
     def read_stock(self, ticker):
         return self.__boardRepository.findByTicker(ticker)
+
+    def get_stocks_paginated(self, page, per_page):
+        return self.__boardRepository.get_all_stocks_paginated(page, per_page)

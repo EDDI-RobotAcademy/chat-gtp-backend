@@ -14,4 +14,8 @@ class BoardService(ABC):
     def read_stock(self, ticker):
         pass
 
+    @abstractmethod
+    def get_stocks_paginated(self, page, per_page):
+        pass
+
 

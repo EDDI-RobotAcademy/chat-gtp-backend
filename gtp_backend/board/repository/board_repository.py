@@ -17,3 +17,7 @@ class BoardRepository(ABC):
     @abstractmethod
     def findByTicker(self, ticker):
         pass
+
+    @abstractmethod
+    def get_all_stocks_paginated(self, page, per_page):
+        pass
