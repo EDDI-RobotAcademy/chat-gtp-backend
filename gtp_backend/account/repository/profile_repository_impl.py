@@ -43,8 +43,8 @@ class ProfileRepositoryImpl(ProfileRepository):
 
     def findByPassword(self, email,password):
         try:
-            email_password = Profile.objects.get(email=email)
-            return email_password.password == password
+            email = Profile.objects.get(email=email)
+            return email.password == password
         except Account.DoesNotExist:
             print('password가 일치하지 않습니다.')
             return None
