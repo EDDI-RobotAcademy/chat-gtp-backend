@@ -81,3 +81,38 @@ class AccountView(viewsets.ViewSet):
         except Exception as e:
             print("계정 생성 중 에러 발생:", e)
             return Response(status=status.HTTP_400_BAD_REQUEST)
+
+    def findNickname(self,request):
+        email = request.data.get('email')
+        print(f"email:{email}")
+        if not email:
+            return Response(None,status=status.HTTP_200_OK)
+        profile = self.profileRepository.findByEmail(email)
+
+        if profile is None:
+            return Response(
+                {"error":"Profile not found"},status=status.HTTP_400_BAD_REQUEST
+            )
+        nickname = profile.nickname
+        print(f"nickname: {nickname}")
+        return Response(nickname,status=status.HTTP_200_OK)
+
+    def modifyPassword(self,request):
+        email = request.data.get('email')
+        newPassword = request.data.get('newPassword')
+        hashed = os.getenv('SALT').encode('utf-8') + newPassword.encode("utf-8")
+        hash_obj = hashlib.sha256(hashed)
+        newpassword1 = hash_obj.hexdigest()
+
+        if not email:
+            return Response(None,status=status.HTTP_200_OK)
+        profile = self.profileRepository.findByEmail(email)
+
+        if profile is None:
+            return Response(
+                {"error":"Profile not found"},status=status.HTTP_400_BAD_REQUEST
+            )
+        profile.password = newpassword1
+        profile.save()
+        print(f"newPassword: {profile.password}")
+        return Response(profile.password,status=status.HTTP_200_OK)

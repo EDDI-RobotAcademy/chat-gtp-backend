@@ -20,4 +20,10 @@ urlpatterns = [
     path('account-check',
          AccountView.as_view({'post': 'checkPasswordDuplication'}),
          name='account-password-duplication-check'),
-]
+]    path('find-nickname',
+         AccountView.as_view({'post':'findNickname'}),
+         name='account-find-nickname'),
+    path('modify-password',
+         AccountView.as_view({'post':'modifyPassword'}),
+        name='account-modify-password'),
+    ]
