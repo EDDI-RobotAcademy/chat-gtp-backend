@@ -1,9 +1,13 @@
 import hashlib
+import random
+import string
 
 from dotenv import load_dotenv
 from rest_framework import viewsets,status
 from rest_framework.response import Response
 import os
+
+from account.entity.profile import Profile
 from account.repository.profile_repository_impl import ProfileRepositoryImpl
 from account.serializers import AccountSerializer
 from account.service.account_service_impl import AccountServiceImpl
@@ -48,7 +52,9 @@ class AccountView(viewsets.ViewSet):
         try:
             email = request.data.get('email')
             password = request.data.get('password')
-            hashed = os.getenv('SALT').encode('utf-8') + password.encode("utf-8")
+            profile = Profile.objects.get(email=email)
+            salt=profile.salt
+            hashed = salt.encode('utf-8') + password.encode("utf-8")
             hash_obj = hashlib.sha256(hashed)
             password = hash_obj.hexdigest()
 
@@ -66,12 +72,26 @@ class AccountView(viewsets.ViewSet):
             nickname = request.data.get('nickname')
             password = request.data.get('password')
             logintype = request.data.get('logintype')
-            hashed = os.getenv('SALT').encode('utf-8') + password.encode("utf-8")
+            # 랜덤한 길이 설정
+            num_letters = random.randint(1, 3)  # 문자 개수 (1~3 사이)
+            num_digits = random.randint(1, 3)  # 숫자 개수 (1~3 사이)
+            num_specials = random.randint(1, 3)  # 특수문자 개수 (1~3 사이)
+
+            # 랜덤 문자, 숫자, 특수문자 생성
+            random_letters = ''.join(random.choices(string.ascii_letters, k=num_letters))
+            random_digits = ''.join(random.choices(string.digits, k=num_digits))
+            random_specials = ''.join(random.choices(string.punctuation, k=num_specials))
+
+            random_string = random_letters + random_digits + random_specials
+            salt = ''.join(random.sample(random_string, len(random_string)))
+
+            hashed = salt.encode('utf-8') + password.encode("utf-8")
             hash_obj = hashlib.sha256(hashed)
             password = hash_obj.hexdigest()
             account = self.accountService.registerAccount(
                 loginType=logintype,
                 email=email,
+                salt=salt,
                 nickname=nickname,
                 password=password
             )
