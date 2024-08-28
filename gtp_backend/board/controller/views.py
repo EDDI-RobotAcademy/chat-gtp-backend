@@ -1,7 +1,9 @@
+import pandas as pd
 from django.core.paginator import Paginator
 from django.db.models import Q
+from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
-from rest_framework import viewsets
+from rest_framework import viewsets, status
 from django.http import JsonResponse
 from pykrx import stock
 from board.entity.models import StockData
@@ -11,50 +13,30 @@ from board.service.board_service_impl import BoardServiceImpl
 class StockView(viewsets.ViewSet):
     stockService = BoardServiceImpl.getInstance()
 
-    def update_stock_data(self, *args, **kwargs):
-        print("Updating stock data...")
-        self.stockService.update()
-        return Response({"status": "stock data updated"})
+    # def update_stock_data(self, *args, **kwargs):
+    #     print("Updating stock data...")
+    #     self.stockService.update()
+    #     return Response({"status": "stock data updated"})
+    #
 
-    def get_all_stocks(self, *args, **kwargs):
-        stocks = self.stockService.get_all_stocks()
-        serializer = StockDataSerializer(stocks, many=True)
-        return Response(serializer.data)
 
     def stock_detail(self, request, pk=None):
         stock = self.stockService.read_stock(pk)
         serializer = StockDataSerializer(stock)
         return Response(serializer.data)
 
-    def get_paginated_stocks(request):
+    def get_paginated_stocks(self, request):
         page = int(request.GET.get('page', 1))
         size = int(request.GET.get('size', 10))
         search_query = request.GET.get('search', '')
 
-        # 검색 조건 적용
-        stocks_query = StockData.objects.all()
-        if search_query:
-            stocks_query = stocks_query.filter(
-                Q(name__icontains=search_query) |
-                Q(ticker__icontains=search_query)
-            )
+        stocks, total_items, total_pages = self.stockService.get_paginated_stocks(page, size, search_query)
 
-        # 총 아이템 수 계산 (필터링된 결과 기준)
-        total_items = stocks_query.count()
-
-        # 페이지네이션 처리
-        start = (page - 1) * size
-        end = start + size
-
-        # 필터링된 결과에서 페이지네이션 적용
-        paginated_stocks_query = stocks_query[start:end]
-
-        # 응답 데이터 구성
         data = {
-            'stocks': list(paginated_stocks_query.values()),
+            'stocks': stocks,
             'totalItems': total_items,
             'currentPage': page,
-            'totalPages': (total_items + size - 1) // size  # 전체 페이지 수 계산
+            'totalPages': total_pages
         }
 
         return JsonResponse(data)
@@ -65,3 +47,19 @@ class StockView(viewsets.ViewSet):
         df['날짜'] = df['날짜'].apply(lambda x: x.strftime('%Y-%m-%d'))  # 날짜 형식 변환
         data = df.to_dict(orient='records')  # 데이터를 딕셔너리 형식으로 변환
         return Response(data)
+
+    def get_realtime_stock_data(self, request, ticker):
+
+
+        # 종목명 조회
+        stock = get_object_or_404(StockData, ticker=ticker)
+
+        # 외부 API로부터 실시간 데이터 가져오기
+        realtime_data = self.stockService.get_realtime_stock_data(ticker)
+
+        if realtime_data is not None:
+            # 종목명 추가
+            realtime_data["name"] = stock.name
+            return Response(realtime_data, status=status.HTTP_200_OK)
+        else:
+            return Response({"error": "Failed to fetch real-time data"}, status=status.HTTP_404_NOT_FOUND)
