@@ -33,9 +33,9 @@ class AccountServiceImpl(AccountService):
         account = self.__profileRepository.findByPassword(email,password)
         return account
 
-    def registerAccount(self,nickname,password,email,loginType):
+    def registerAccount(self,nickname,password,salt,email,loginType):
         account = self.__accountRepository.create(loginType)
-        return self.__profileRepository.create(nickname, password, email, account)
+        return self.__profileRepository.create(nickname, password, salt ,email, account)
 
     def findAccountByEmail(self, email):
         return self.__profileRepository.findByEmail(email)

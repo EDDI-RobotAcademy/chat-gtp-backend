@@ -15,5 +15,5 @@ class ProfileRepository(ABC):
         pass
 
     @abstractmethod
-    def create(self, nickname,password,email, account):
+    def create(self, nickname,password,salt,email, account):
         pass

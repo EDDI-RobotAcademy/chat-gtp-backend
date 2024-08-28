@@ -33,7 +33,7 @@ class ProfileRepositoryImpl(ProfileRepository):
     def findByNickname(self, Nickname):
         try:
             profile = Profile.objects.get(nickname=Nickname)
-            return profile
+            return profile.nickname == Nickname
         except Account.DoesNotExist:
             print('nickname와 일치하는 계정이 없습니다')
             return None
@@ -52,7 +52,7 @@ class ProfileRepositoryImpl(ProfileRepository):
             print(f"password로 계정 찾는 중 에러 발생: {e}")
             return None
 
-    def create(self,nickname,password,email,account):
-        profile = Profile.objects.create(nickname=nickname,password=password,email=email, account=account)
+    def create(self,nickname,password,salt,email,account):
+        profile = Profile.objects.create(nickname=nickname,password=password,salt=salt,email=email, account=account)
         return profile
 
