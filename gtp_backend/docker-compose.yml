@@ -2,7 +2,7 @@ version: '3'
 services:
   django:
     container_name: django
-    image: ghcr.io/${GITHUB_ACTOR}/gtp-django-test-server:latest
+    image: ghcr.io/${GITHUB_ACTOR}/gtp-django-backend-server:latest
     command: /app/wait-for-it.sh db:3306 -t 15 -- sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
     restart: always
     ports:
@@ -24,6 +24,19 @@ services:
       - KAKAO_REDIRECT_URI=${KAKAO_REDIRECT_URI}
       - KAKAO_TOKEN_REQUEST_URI=${KAKAO_TOKEN_REQUEST_URI}
       - KAKAO_USERINFO_REQUEST_URI=${KAKAO_USERINFO_REQUEST_URI}
+      - GOOGLE_LOGIN_URL=${GOOGLE_LOGIN_URL}
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+      - GOOGLE_REDIRECT_URI=${GOOGLE_REDIRECT_URI}
+      - GOOGLE_TOKEN_REQUEST_URI=${GOOGLE_TOKEN_REQUEST_URI}
+      - GOOGLE_USEREMAIL_REQUEST_URI=${GOOGLE_USEREMAIL_REQUEST_URI}
+      - GOOGLE_USERINFO_REQUEST_URI=${GOOGLE_USERINFO_REQUEST_URI}
+      - NAVER_LOGIN_URL=${NAVER_LOGIN_URL}
+      - NAVER_CLIENT_ID=${NAVER_CLIENT_ID}
+      - NAVER_CLIENT_SECRET=${NAVER_CLIENT_SECRET}
+      - NAVER_REDIRECT_URI=${NAVER_REDIRECT_URI}
+      - NAVER_TOKEN_REQUEST_URI=${NAVER_TOKEN_REQUEST_URI}
+      - NAVER_USERINFO_REQUEST_URI=${NAVER_USERINFO_REQUEST_URI}
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - REDIS_PASSWORD=${REDIS_PASSWORD}
