@@ -13,11 +13,11 @@ from board.service.board_service_impl import BoardServiceImpl
 class StockView(viewsets.ViewSet):
     stockService = BoardServiceImpl.getInstance()
 
-    # def update_stock_data(self, *args, **kwargs):
-    #     print("Updating stock data...")
-    #     self.stockService.update()
-    #     return Response({"status": "stock data updated"})
-    #
+    def update_stock_data(self, *args, **kwargs):
+        print("Updating stock data...")
+        self.stockService.update()
+        return Response({"status": "stock data updated"})
+
 
 
     def stock_detail(self, request, pk=None):
