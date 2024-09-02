@@ -33,8 +33,10 @@ class StockView(viewsets.ViewSet):
             'stocks': stocks,
             'totalItems': total_items,
             'currentPage': page,
+            'searchQuery': search_query,
             'totalPages': total_pages
         }
+        print(data)
 
         return JsonResponse(data)
 

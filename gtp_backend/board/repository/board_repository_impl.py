@@ -85,9 +85,15 @@ class BoardRepositoryImpl:
 
         return stocks, total_items, total_pages
 
+    @staticmethod
+    def get_last_trading_day(date):
+        while date.weekday() > 4:  # 0: Monday, 1: Tuesday, ..., 4: Friday, 5: Saturday, 6: Sunday
+            date -= timedelta(days=1)
+        return date
+
     def get_realtime_stock_datas(self, ticker: str):
-        today = datetime.now().strftime("%Y%m%d")
-        yesterday = (datetime.now() - timedelta(1)).strftime("%Y%m%d")
+        today = self.get_last_trading_day(datetime.now()).strftime("%Y%m%d")
+        yesterday = self.get_last_trading_day(datetime.now() - timedelta(1)).strftime("%Y%m%d")
 
         try:
             # 오늘 날짜의 종가
@@ -128,8 +134,8 @@ class BoardRepositoryImpl:
 
 
     def get_realtime_stock_data(self, ticker: str):
-        today = datetime.now().strftime("%Y%m%d")
-        yesterday = (datetime.now() - timedelta(1)).strftime("%Y%m%d")
+        today = self.get_last_trading_day(datetime.now()).strftime("%Y%m%d")
+        yesterday = self.get_last_trading_day(datetime.now() - timedelta(1)).strftime("%Y%m%d")
 
         try:
 
