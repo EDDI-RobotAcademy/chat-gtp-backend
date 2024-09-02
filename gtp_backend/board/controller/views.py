@@ -62,3 +62,14 @@ class StockView(viewsets.ViewSet):
             return Response(realtime_data, status=status.HTTP_200_OK)
         else:
             return Response({"error": "Failed to fetch real-time data"}, status=status.HTTP_404_NOT_FOUND)
+
+    def searchTicker(self,request):
+        stockName = request.data.get("stockName")
+
+        ticker = self.stockService.search_ticker(stockName['stockName'])
+
+        if ticker is not None:
+            return Response(ticker,status=status.HTTP_200_OK)
+        else:
+            return Response({"error": "맞는 종목이 존재하지 않습니다"},status=status.HTTP_200_OK)
+

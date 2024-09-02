@@ -17,3 +17,7 @@ class BoardRepository(ABC):
     @abstractmethod
     def get_realtime_stock_data(self, ticker):
         pass
+
+    @abstractmethod
+    def search_ticker(self,stockName):
+        pass
