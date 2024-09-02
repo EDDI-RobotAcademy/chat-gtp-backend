@@ -4,10 +4,11 @@ from django.core.paginator import Paginator
 from django.db.models import Q
 from pykrx import stock
 from board.entity.models import StockData
+from board.repository.board_repository import BoardRepository
 
 logger = logging.getLogger(__name__)
 
-class BoardRepositoryImpl:
+class BoardRepositoryImpl(BoardRepository):
     __instance = None
 
 
@@ -173,3 +174,18 @@ class BoardRepositoryImpl:
         except Exception as e:
             print(f"Error fetching real-time data for {ticker}: {e}")
             return None
+
+    def search_ticker(self, stockName):
+        try:
+            stockData = StockData.objects.get(name=stockName)
+            print(stockData.ticker)
+            return stockData.ticker
+
+        except stockData.DoesNotExist:
+            print(f"주식 이름으로 ticker 정보를 찾을 수 없습니다: {stockData}")
+            return None
+        except Exception as e:
+            print(f'주식 이름 검사 중 에러: {e}')
+            return None
+
+

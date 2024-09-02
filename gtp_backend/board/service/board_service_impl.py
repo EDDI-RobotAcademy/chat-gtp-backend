@@ -27,3 +27,6 @@ class BoardServiceImpl(BoardService):
 
     def get_realtime_stock_data(self, ticker):
         return self.__boardRepository.get_realtime_stock_data(ticker)
+
+    def search_ticker(self, stockName):
+        return self.__boardRepository.search_ticker(stockName)
