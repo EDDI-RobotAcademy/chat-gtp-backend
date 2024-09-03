@@ -27,8 +27,9 @@ class StockView(viewsets.ViewSet):
         page = int(request.GET.get('page', 1))
         size = int(request.GET.get('size', 10))
         search_query = request.GET.get('search', '')
+        email = request.GET.get('email', None)  # email 추가
 
-        stocks, total_items, total_pages = self.stockService.get_paginated_stocks(page, size, search_query)
+        stocks, total_items, total_pages = self.stockService.get_paginated_stocks(page, size, search_query, email)
         data = {
             'stocks': stocks,
             'totalItems': total_items,
@@ -36,7 +37,6 @@ class StockView(viewsets.ViewSet):
             'searchQuery': search_query,
             'totalPages': total_pages
         }
-        print(data)
 
         return JsonResponse(data)
 
@@ -50,11 +50,13 @@ class StockView(viewsets.ViewSet):
 
     # 실시간 주식 데이터 조회
     def get_realtime_stock_data(self, request, ticker):
+        email = request.GET.get('email', None)
+        print("email: ", email)
         # 종목명 조회
         stock = get_object_or_404(StockData, ticker=ticker)
         print(stock)
         # 외부 API로부터 실시간 데이터 가져오기
-        realtime_data = self.stockService.get_realtime_stock_data(ticker)
+        realtime_data = self.stockService.get_realtime_stock_data(ticker, email)
 
         if realtime_data is not None:
             # 종목명 추가
