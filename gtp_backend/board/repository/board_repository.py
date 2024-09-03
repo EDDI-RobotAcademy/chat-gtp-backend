@@ -11,7 +11,7 @@ class BoardRepository(ABC):
         pass
 
     @abstractmethod
-    def get_paginated_stocks(self, page, size, search_query):
+    def get_paginated_stocks(self, page, size, search_query, email):
         pass
 
     @abstractmethod

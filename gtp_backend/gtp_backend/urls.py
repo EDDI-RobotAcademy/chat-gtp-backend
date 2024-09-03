@@ -23,6 +23,7 @@ urlpatterns = [
     path("account/",include('account.urls')),
     path('oauth/', include('oauth.urls')),
     path('google_oauth/',include('google_oauth.urls')),
-    path('naver_oauth/',include('naver_oauth.urls'))
+    path('naver_oauth/',include('naver_oauth.urls')),
+    path('favorite_stocks/', include('stock_favorite.urls')),
 ]
 
