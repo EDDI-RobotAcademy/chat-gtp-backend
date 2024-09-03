@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_extensions',
     'board',
-    'account'
+    'account',
+    'stock_favorite',
 ]
 
 MIDDLEWARE = [
