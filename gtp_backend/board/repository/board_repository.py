@@ -21,3 +21,7 @@ class BoardRepository(ABC):
     @abstractmethod
     def search_ticker(self,stockName):
         pass
+
+    @abstractmethod
+    def get_favorite_stocks_with_details(self, email):
+        pass

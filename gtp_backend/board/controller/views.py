@@ -75,3 +75,11 @@ class StockView(viewsets.ViewSet):
         else:
             return Response({"error": "맞는 종목이 존재하지 않습니다"},status=status.HTTP_404_NOT_FOUND)
 
+    def get_favorite_stocks_with_details(self, request):
+        email = request.data.get('email')
+        if not email:
+            return Response({'error': 'Email is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        favorite_stocks = self.stockService.get_favorite_stocks_with_details(email)
+        print(favorite_stocks)
+        return Response({'stocks': favorite_stocks}, status=status.HTTP_200_OK)

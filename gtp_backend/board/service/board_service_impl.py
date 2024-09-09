@@ -34,5 +34,7 @@ class BoardServiceImpl(BoardService):
     def search_ticker(self, stockName):
         return self.__boardRepository.search_ticker(stockName)
 
+    def get_favorite_stocks_with_details(self, email):
+        return self.__boardRepository.get_favorite_stocks_with_details(email)
 
 

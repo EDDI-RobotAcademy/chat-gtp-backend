@@ -4,6 +4,7 @@ from django.core.paginator import Paginator
 from django.db.models import Q
 from pykrx import stock
 from board.entity.models import StockData
+from stock_favorite.entity.models import FavoriteStocks
 from stock_favorite.repository.stock_favorite_repository_impl import FavoriteStocksRepositoryImpl
 from stock_favorite.service.stock_favorite_service_impl import FavoriteStocksServiceImpl
 
@@ -153,3 +154,19 @@ class BoardRepositoryImpl:
         except Exception as e:
             print(f'주식 이름 검사 중 에러: {e}')
             return None
+
+    def get_favorite_stocks_with_details(self, email):
+        tickers = FavoriteStocks.objects.filter(email=email).values_list('ticker', flat=True)
+        favorite_stocks = []
+
+        for ticker in tickers:
+            stock_data = self.get_realtime_stock_data(ticker)
+            if stock_data:
+                stock_name = StockData.objects.filter(ticker=ticker).values_list('name', flat=True).first()
+                favorite_stocks.append({
+                    'name': stock_name,
+                    'close': stock_data['close'],
+                    'priceChange': stock_data['priceChange'],
+                    'percentageChange': stock_data['percentageChange']
+                })
+        return favorite_stocks
