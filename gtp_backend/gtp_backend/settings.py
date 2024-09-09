@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'board',
     'account',
     'stock_favorite',
+    'kis_trading',
 ]
 
 MIDDLEWARE = [

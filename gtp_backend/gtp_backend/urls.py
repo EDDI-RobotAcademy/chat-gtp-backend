@@ -25,5 +25,6 @@ urlpatterns = [
     path('google_oauth/',include('google_oauth.urls')),
     path('naver_oauth/',include('naver_oauth.urls')),
     path('favorite_stocks/', include('stock_favorite.urls')),
+    path('trading/', include('kis_trading.urls')),
 ]
 
