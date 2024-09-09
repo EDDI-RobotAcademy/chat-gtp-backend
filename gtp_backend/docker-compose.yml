@@ -3,7 +3,7 @@ services:
   django:
     container_name: django
     image: ghcr.io/${GITHUB_ACTOR}/gtp-django-backend-server:latest
-    command: /app/wait-for-it.sh db:3306 -t 15 -- sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    command: /app/wait-for-it.sh db:3306 -t 15 -- sh -c "python manage.py migrate && python manage.py update_stock_data && python manage.py runserver 0.0.0.0:8000"
     restart: always
     ports:
       - "8000:8000"

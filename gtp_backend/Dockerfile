@@ -27,4 +27,4 @@ ENV PYTHONUNBUFFERED 1
 
 
 # wait-for-it.sh 스크립트를 사용하여 MySQL 컨테이너가 준비될 때까지 대기
-CMD ["/app/wait-for-it.sh", "db:3306", "--", "sh", "-c", "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"]
+CMD ["/app/wait-for-it.sh", "db:3306", "--", "sh", "-c", "python manage.py migrate && python manage.py update_stock_data && python manage.py runserver 0.0.0.0:8000"]

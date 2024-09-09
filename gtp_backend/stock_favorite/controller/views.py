@@ -41,11 +41,10 @@ class FavoriteStocksView(viewsets.ViewSet):
         email = request.data.get('email')
         print("email: ", email)
         if not email:
-            return JsonResponse({'error': 'Email is required'}, status=400)
+            return Response({'error': 'Email is required'}, status=status.HTTP_400_BAD_REQUEST)
 
         favorite_stocks = self.favoriteStocksService.get_favorite_stocks(email)
-        print("Favorite stocks: ", favorite_stocks)
-        return JsonResponse({'stocks': favorite_stocks})
+        return Response({'stocks': favorite_stocks},status=status.HTTP_200_OK   )
 
 
     def removeFavorite(self, request):

@@ -35,7 +35,7 @@ class BoardRepositoryImpl:
             return
 
         logger.info("Fetching new stock data...")
-        ohlcv = stock.get_market_ohlcv("2024030", market="KOSPI")
+        ohlcv = stock.get_market_ohlcv("20240830", market="KOSPI")
         tickers = ohlcv.index
 
         ohlcv.insert(0, 'name', [stock.get_market_ticker_name(ticker) for ticker in tickers])

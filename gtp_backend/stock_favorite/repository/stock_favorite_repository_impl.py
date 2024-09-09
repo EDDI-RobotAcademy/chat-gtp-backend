@@ -33,8 +33,12 @@ class FavoriteStocksRepositoryImpl(FavoriteStocksRepository):
         FavoriteStocks.objects.filter(email=email, ticker=ticker).delete()
 
     def get_favorite_stocks(self, email):
-        favorite_tickers = self.find_favorite_tickers_by_email(email)
-        favorite_stocks = StockData.objects.filter(ticker__in=favorite_tickers).values()
+        # FavoriteStocks에서 해당 email의 ticker들을 추출
+        tickers = FavoriteStocks.objects.filter(email=email).values_list('ticker', flat=True)
+
+        # 추출한 ticker들을 바탕으로 StockData에서 'name'과 'ticker' 필드를 검색
+        favorite_stocks = StockData.objects.filter(ticker__in=tickers).values_list('name', 'ticker')
+
         print("Favorite stocks: ", favorite_stocks)
         return list(favorite_stocks)
 
