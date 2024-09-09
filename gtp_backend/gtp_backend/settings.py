@@ -84,6 +84,12 @@ NAVER ={
     'USERINFO_REQUEST_URI': os.getenv('NAVER_USERINFO_REQUEST_URI'),
 }
 
+STOCK={
+    'APP_KEY':os.getenv("APP_KEY"),
+    "SECRET_APP_KEY":os.getenv("SECRET_APP_KEY"),
+    "ACCOUNT_NUM":os.getenv("ACCOUNT_NUM")
+}
+
 CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS', '').split(',')
 CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', '').split(',')
 
@@ -118,7 +124,7 @@ DATABASES = {
         'NAME': os.getenv('DATABASE_NAME'),
         'USER': os.getenv('DATABASE_USER'),
         'PASSWORD': os.getenv('DATABASE_PASSWORD'),
-        # 'HOST': os.getenv('DATABASE_HOST'),
+        'HOST': os.getenv('DATABASE_HOST'),
         'PORT': '3306',
     }
 }
