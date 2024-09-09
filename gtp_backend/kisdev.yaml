@@ -1,0 +1,18 @@
+#koreainvestment developer info
+#홈페이지에서 API서비스 신청시 받은 Appkey, Appsecret 값 설정
+my_app: "PSpNPcdWt4Oy94FYZZW4w0R8JKi50r4M6SvQ"
+my_sec: "hG9fSc4iXFSqGvg5OpAwz1fflsE18Kv6WpQCOQddUqOA+lizPHeigvIX0rf4RUIyqgv8YYIiEd1LWTED1cckkTyuaGtb1Co4zLlAcvsLZa5ruafueqAXeyBxo03OdLfnMkAcATiQfqo3+iXyDxBo/C0V/QtVazcqK+Pv2jhD+HRg3Ov/Ixs="
+my_acct: "50114798"
+my_acct_stock: "50114798"
+my_phone: "01075065266"
+
+#User Agent
+my_agent: "'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.47 Safari/537.36"
+
+#domain info
+#실전투자
+prod: "https://openapivts.koreainvestment.com:29443"
+#웹소켓
+ops: "ws://ops.koreainvestment.com:21000"
+#모의투자서비스
+vts: "https://openapivts.koreainvestment.com:29443"

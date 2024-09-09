@@ -73,5 +73,5 @@ class StockView(viewsets.ViewSet):
         if ticker is not None:
             return Response(ticker,status=status.HTTP_200_OK)
         else:
-            return Response({"error": "맞는 종목이 존재하지 않습니다"},status=status.HTTP_200_OK)
+            return Response({"error": "맞는 종목이 존재하지 않습니다"},status=status.HTTP_404_NOT_FOUND)
 
