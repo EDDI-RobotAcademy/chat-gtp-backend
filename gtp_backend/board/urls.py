@@ -12,6 +12,7 @@ urlpatterns = [
     path('stock/<str:ticker>/<str:start_date>/<str:end_date>/', StockView.as_view({'get': 'get_stock_data'}), name='board-stock-data'),
     path('stocks', StockView.as_view({'get': 'get_paginated_stocks'}), name='get_paginated_stocks'),
     path('stocks/realtime/<str:ticker>/', StockView.as_view({'get': 'get_realtime_stock_data'}), name='stock-realtime-data'),
-    path('search-ticker',StockView.as_view({'post':'searchTicker'}),name='search-ticker')
+    path('search-ticker',StockView.as_view({'post':'searchTicker'}),name='search-ticker'),
+    path('favorite-list-detail',StockView.as_view({'post':'get_favorite_stocks_with_details'}),name='favorite-list-detail')
 ]
 
