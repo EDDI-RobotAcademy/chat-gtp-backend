@@ -165,6 +165,7 @@ class BoardRepositoryImpl:
                 stock_name = StockData.objects.filter(ticker=ticker).values_list('name', flat=True).first()
                 favorite_stocks.append({
                     'name': stock_name,
+                    'ticker': ticker,
                     'close': stock_data['close'],
                     'priceChange': stock_data['priceChange'],
                     'percentageChange': stock_data['percentageChange']
