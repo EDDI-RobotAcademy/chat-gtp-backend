@@ -10,7 +10,7 @@ from rest_framework.response import Response
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..'))
 sys.path.append(os.path.join(project_root, 'gtp_backend', 'kis_trading', 'controller'))
 
-import kis_api as ka
+from kis_trading.controller import kis_api as ka
 import pandas as pd
 
 
